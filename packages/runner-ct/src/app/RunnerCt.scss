@@ -195,3 +195,25 @@ main.app-ct {
     display: none;
   }
 }
+
+.ct-overlay{
+  position: absolute;
+  padding-left: 300px;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  background: #333333;
+  opacity: 0.6;
+  .no-spec{
+    color: #FFFFFF;
+    .key{
+      color: black;
+    }
+  }
+  .keyboard-helper{
+    margin: auto;
+    color: #FFFFFF;
+  }
+}

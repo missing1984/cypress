@@ -119,45 +119,54 @@ const App: React.FC<AppProps> = observer(
       <>
         <main className="app-ct">
           {isOpenMode && (
-            <div
-              className={cs(
-                'specs-list-drawer',
-                {
-                  'display-none': state.screenshotting,
-                },
-              )}
-              style={{
-                transform: isSpecsListOpen ? `translateX(0)` : `translateX(-${drawerWidth - 20}px)`,
-              }}
-            >
-              <ResizableBox
-                disabled={!isSpecsListOpen}
-                width={drawerWidth}
-                onIsResizingChange={setIsResizing}
-                onWidthChange={setDrawerWidth}
-                className="specs-list-container"
-                data-cy="specs-list-resize-box"
-                minWidth={200}
-                maxWidth={windowSize.width / 100 * 80} // 80vw
+            <>
+              {isSpecsListOpen ? <div className="ct-overlay" onClick={() => state.spec ? setIsSpecsListOpen(false) : null}>
+                {!state.spec ? <NoSpecSelected onSelectSpecRequest={focusSpecsList}>
+                  <KeyboardHelper />
+                </NoSpecSelected> : <div className="no-spec">
+                  <KeyboardHelper />
+                </div>}
+              </div> : undefined}
+              <div
+                className={cs(
+                  'specs-list-drawer',
+                  {
+                    'display-none': state.screenshotting,
+                  },
+                )}
+                style={{
+                  transform: isSpecsListOpen ? `translateX(0)` : `translateX(-${drawerWidth - 20}px)`,
+                }}
               >
-                <nav>
-                  <a
-                    id="menu-toggle"
-                    onClick={() => setIsSpecsListOpen(!isSpecsListOpen)}
-                    className="menu-toggle"
-                    aria-label="Open the menu"
-                  >
-                    <Burger />
-                  </a>
-                </nav>
-                <SpecList
-                  specs={state.specs}
-                  inputRef={searchRef}
-                  selectedSpecs={state.spec ? [state.spec.absolute] : []}
-                  onSelectSpec={runSpec}
-                />
-              </ResizableBox>
-            </div>
+                <ResizableBox
+                  disabled={!isSpecsListOpen}
+                  width={drawerWidth}
+                  onIsResizingChange={setIsResizing}
+                  onWidthChange={setDrawerWidth}
+                  className="specs-list-container"
+                  data-cy="specs-list-resize-box"
+                  minWidth={200}
+                  maxWidth={windowSize.width / 100 * 80} // 80vw
+                >
+                  <nav>
+                    <a
+                      id="menu-toggle"
+                      onClick={() => setIsSpecsListOpen(!isSpecsListOpen)}
+                      className="menu-toggle"
+                      aria-label="Open the menu"
+                    >
+                      <Burger />
+                    </a>
+                  </nav>
+                  <SpecList
+                    specs={state.specs}
+                    inputRef={searchRef}
+                    selectedSpecs={state.spec ? [state.spec.absolute] : []}
+                    onSelectSpec={runSpec}
+                  />
+                </ResizableBox>
+              </div>
+            </>
           )}
 
           <div className={cs('app-wrapper', {
@@ -218,9 +227,7 @@ const App: React.FC<AppProps> = observer(
                 <div className={cs('runner runner-ct container', { screenshotting: state.screenshotting })}>
                   <Header {...props} ref={headerRef}/>
                   {!state.spec ? (
-                    <NoSpecSelected onSelectSpecRequest={focusSpecsList}>
-                      <KeyboardHelper />
-                    </NoSpecSelected>
+                    <div/>
                   ) : (
                     <Iframes {...props} />
                   )}
