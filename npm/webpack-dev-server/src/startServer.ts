@@ -1,10 +1,15 @@
+/* eslint-disable no-console */
 import Debug from 'debug'
 import webpack from 'webpack'
 import WebpackDevServer from 'webpack-dev-server'
+import formatWebpackMessages from 'react-dev-utils/formatWebpackMessages'
 import { StartDevServer } from '.'
 import { makeWebpackConfig } from './makeWebpackConfig'
+import ora from 'ora'
 
 const debug = Debug('cypress:webpack-dev-server:start')
+
+let spinner
 
 export async function start ({ webpackConfig: userWebpackConfig, options, ...userOptions }: StartDevServer): Promise<WebpackDevServer> {
   if (!userWebpackConfig) {
@@ -44,10 +49,40 @@ export async function start ({ webpackConfig: userWebpackConfig, options, ...use
   // since we are passing in the compiler directly, and these
   // devServer options would otherwise get ignored
   const webpackDevServerConfig = {
+    port: 8080,
+    host: 'localhost',
     ...userWebpackConfig.devServer,
     hot: false,
     inline: false,
   }
 
-  return new WebpackDevServer(compiler, webpackDevServerConfig)
+  const server = new WebpackDevServer(compiler, webpackDevServerConfig)
+
+  server.listen(webpackDevServerConfig.port, webpackDevServerConfig.host, (err) => {
+    if (err) {
+      console.error(err)
+    }
+  })
+
+  compiler.hooks.invalid.tap('cyInvalidServer', function () {
+    console.log()
+    spinner = ora('Compiling Tests...').start()
+  })
+
+  // Custom error reporting
+  compiler.hooks.done.tap('cyCustomErrorServer', function (stats) {
+    if (spinner) {
+      spinner.stop()
+    }
+
+    const messages = formatWebpackMessages(stats.toJson({}, true))
+
+    if (!messages.errors.length && !messages.warnings.length) {
+      console.log('Compiled successfully!')
+    }
+
+    //printAllErrorsAndWarnings(messages, stats.compilation)
+  })
+
+  return server
 }

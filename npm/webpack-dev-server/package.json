@@ -12,10 +12,13 @@
   "dependencies": {
     "debug": "4.3.2",
     "lazy-compile-webpack-plugin": "0.1.11",
+    "ora": "^5.3.0",
+    "react-dev-utils": "^11.0.3",
     "semver": "^7.3.4",
     "webpack-merge": "^5.4.0"
   },
   "devDependencies": {
+    "@types/react-dev-utils": "^9.0.4",
     "@types/webpack-dev-server": "^3.11.1",
     "chai": "^4.2.0",
     "mocha": "^8.1.3",
