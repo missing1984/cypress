@@ -1,5 +1,6 @@
 const path = require('path')
 const webpackPreprocessor = require('@cypress/webpack-preprocessor')
+const PnpWebpackPlugin = require('pnp-webpack-plugin')
 
 const getDefaultWebpackOptions = (file, options = {}) => {
   const config = {
@@ -62,6 +63,14 @@ const getDefaultWebpackOptions = (file, options = {}) => {
         'repl': require.resolve('./empty'),
         'tls': require.resolve('./empty'),
       },
+      plugins: [
+        PnpWebpackPlugin,
+      ],
+    },
+    resolveLoader: {
+      plugins: [
+        PnpWebpackPlugin.moduleLoader(module),
+      ],
     },
   }
 
@@ -93,10 +102,10 @@ const getDefaultWebpackOptions = (file, options = {}) => {
     })
 
     config.resolve.extensions = config.resolve.extensions.concat(['.ts', '.tsx'])
-    config.resolve.plugins = [new TsconfigPathsPlugin({
+    config.resolve.plugins.push(new TsconfigPathsPlugin({
       configFile,
       silent: true,
-    })]
+    }))
   }
 
   return config
